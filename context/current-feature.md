@@ -2,10 +2,6 @@
 
 <!-- Feature name and short description -->
 
-**Dashboard UI — Phase 3 (Main Area)** — the final phase of the dashboard layout:
-build out the main content area to the right of the sidebar.
-Spec: @context/features/dashboard-phase-3-spec.md
-
 ## Status
 
 <!-- Not started | In Progress | Completed -->
@@ -16,29 +12,9 @@ Completed
 
 <!-- Goals and Requirements -->
 
-- Build the main content area to the right of the sidebar on `/dashboard`.
-- 4 stats cards across the top: total items, total collections, favorite items,
-  favorite collections. (Not in the screenshot — new for phase 3.)
-- Recent collections section — collection cards whose background color reflects the
-  item type they contain most.
-- Pinned items section.
-- 10 most recent items — cards with a border color matching their item type.
-- Match @context/screenshots/dashboard-ui-main.png as a reference (does not have to be
-  exact).
-- Data comes straight from `src/lib/mock-data` for now; no database yet.
-
 ## Notes
 
 <!-- Any extra notes -->
-
-- The spec references `@src/lib/mock-data.js`; the file in the repo is `.ts` — use that.
-- Type colors already exist as `@theme` tokens in `globals.css` from phase 2
-  (`text-type-*`, `border-type-*`), so the item/collection cards should use those rather
-  than inline hex values.
-- Mock collections have no timestamps, so "recent" is source order (same approach as the
-  sidebar in phase 2).
-- `/items/[type]` and `/collections/[id]` still don't exist, so card links will 404 until
-  those routes are built.
 
 ## History
 
@@ -114,5 +90,8 @@ Completed
     regardless of pin state, which is what the spec asks for.
   - `npm run build` and `npm run lint` pass; verified at 1440px and 390px with no console
     errors and no horizontal overflow.
+  - The spec references `@src/lib/mock-data.js`; the file in the repo is `.ts`.
+  - Mock collections still have no timestamps, so the collections grid uses source
+    order, capped at 6 — the same fallback the phase 2 sidebar uses.
   - Known gaps: `/collections`, `/collections/[id]` and `/items/[type]` still don't
     exist, so the collection cards and "View all" 404; no item drawer yet.
