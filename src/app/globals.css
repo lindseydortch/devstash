@@ -48,6 +48,18 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* Item type colors. Mirrors the hex values on the item types in mock-data.ts,
+   so type accents can use static utilities (text-type-snippet, border-type-link). */
+@theme {
+  --color-type-snippet: #3b82f6;
+  --color-type-prompt: #8b5cf6;
+  --color-type-command: #f97316;
+  --color-type-note: #fde047;
+  --color-type-file: #6b7280;
+  --color-type-image: #ec4899;
+  --color-type-link: #10b981;
+}
+
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
