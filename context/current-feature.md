@@ -2,10 +2,6 @@
 
 <!-- Feature name and short description -->
 
-**Dashboard UI — Phase 2 (Sidebar)** — Build out the real sidebar: item types,
-favorite and recent collections, a user area, and collapse/drawer behavior.
-Spec: @context/features/dashboard-phase-2-spec.md
-
 ## Status
 
 <!-- Not started | In Progress | Completed -->
@@ -16,32 +12,9 @@ Completed
 
 <!-- Goals and Requirements -->
 
-- Collapsible sidebar, with a drawer/panel toggle icon in the top bar
-- **Types** section listing every item type with its Lucide icon, type color and item
-  count, each linking to `/items/[slug]` (e.g. `/items/snippets`)
-- **Collections** section split into favorites (starred) and the most recent
-  collections, each linking to `/collections/[id]`
-- User avatar area pinned to the bottom (name, email, settings affordance)
-- Always a drawer on mobile; fixed sidebar on desktop
-- Data comes from `@src/lib/mock-data.ts` imported directly — no database yet
-
 ## Notes
 
 <!-- Any extra notes -->
-
-- Replaces the phase 1 placeholder in `src/components/layout/Sidebar.tsx`; the
-  `Topbar` gains the sidebar toggle.
-- Reference screenshot: @context/screenshots/dashboard-ui-main.png. It labels the
-  second collections group "ALL COLLECTIONS"; the spec asks for *most recent*
-  collections, so sort by recency and cap the list.
-- Type icons are stored as Lucide icon *names* in mock data, so the sidebar needs a
-  name → component map.
-- Likely shadcn additions: `sidebar` (brings `sheet`, `tooltip`, `skeleton`),
-  `avatar`, `collapsible`, `scroll-area`.
-- Routes `/items/[type]` and `/collections/[id]` don't exist yet — links can point at
-  them ahead of the pages (404 until phase 3 / later features).
-- Main area stays a placeholder; it's built in phase 3
-  (@context/features/dashboard-phase-3-spec.md).
 
 ## History
 
@@ -81,6 +54,9 @@ Completed
     values on the data.
   - `use-mobile.ts` shipped by the shadcn CLI called `setState` in an effect, which this
     project's React Compiler lint rules reject; rewritten with `useSyncExternalStore`.
+  - The second collections group is labelled RECENT per the spec (the screenshot says
+    ALL COLLECTIONS); mock collections have no timestamps, so "recent" is source order
+    capped at 5.
   - Data still comes straight from `src/lib/mock-data.ts`.
   - `npm run build` and `npm run lint` pass; verified at 1440px (expanded + icon
     collapsed with tooltips) and 390px (drawer), no console errors.
