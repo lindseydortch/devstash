@@ -1,3 +1,6 @@
+import { redirect } from "next/navigation";
+
+// Temporary: the marketing landing page will live here later.
 export default function Home() {
-  return <h1>Devstash</h1>;
+  redirect("/dashboard");
 }
