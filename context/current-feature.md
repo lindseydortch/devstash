@@ -2,6 +2,10 @@
 
 <!-- Feature name and short description -->
 
+**Dashboard UI — Phase 3 (Main Area)** — the final phase of the dashboard layout:
+build out the main content area to the right of the sidebar.
+Spec: @context/features/dashboard-phase-3-spec.md
+
 ## Status
 
 <!-- Not started | In Progress | Completed -->
@@ -12,9 +16,29 @@ Completed
 
 <!-- Goals and Requirements -->
 
+- Build the main content area to the right of the sidebar on `/dashboard`.
+- 4 stats cards across the top: total items, total collections, favorite items,
+  favorite collections. (Not in the screenshot — new for phase 3.)
+- Recent collections section — collection cards whose background color reflects the
+  item type they contain most.
+- Pinned items section.
+- 10 most recent items — cards with a border color matching their item type.
+- Match @context/screenshots/dashboard-ui-main.png as a reference (does not have to be
+  exact).
+- Data comes straight from `src/lib/mock-data` for now; no database yet.
+
 ## Notes
 
 <!-- Any extra notes -->
+
+- The spec references `@src/lib/mock-data.js`; the file in the repo is `.ts` — use that.
+- Type colors already exist as `@theme` tokens in `globals.css` from phase 2
+  (`text-type-*`, `border-type-*`), so the item/collection cards should use those rather
+  than inline hex values.
+- Mock collections have no timestamps, so "recent" is source order (same approach as the
+  sidebar in phase 2).
+- `/items/[type]` and `/collections/[id]` still don't exist, so card links will 404 until
+  those routes are built.
 
 ## History
 
@@ -62,3 +86,33 @@ Completed
     collapsed with tooltips) and 390px (drawer), no console errors.
   - Known gaps: `/items/[type]`, `/collections/[id]` and `/settings` don't exist yet, so
     those links 404; section collapse state isn't persisted; main area lands in phase 3.
+- 2026-09-16 — Phase 3 spec documented here and marked In Progress.
+- 2026-09-16 — **Dashboard UI — Phase 3 (Main Area)** — Completed.
+  Spec: @context/features/dashboard-phase-3-spec.md. Built on branch
+  `feature/dashboard-phase-3`.
+  - shadcn `card` and `badge` installed.
+  - `/dashboard` now renders: page heading, 4 stats cards, a Collections grid with a
+    "View all" link, a Pinned section and a Recent section of the 10 newest items.
+  - `StatsCards` (`src/components/dashboard/`) counts items, collections and the
+    favorites of each. Counts come from the mock arrays, so they read 10 / 6 / 3 / 3
+    rather than matching the larger per-type counts baked into the sidebar mock — the
+    two line up once the database replaces `mock-data.ts`.
+  - `CollectionCard` (`src/components/collections/`) takes its left accent border and
+    faint card wash from the collection's `defaultTypeId`, and lists the types it holds
+    as icons. Links to `/collections/[id]`.
+  - `ItemCard` (`src/components/items/`) is a type-colored icon tile, title with pin and
+    star markers, description, tags and the updated date. Display only for now — items
+    are meant to open in a drawer, which is a later feature.
+  - `item-types.ts` gained `getTypeById` plus `border-l-type-*`, `bg-type-*/5` and
+    `bg-type-*/10` class maps, following the phase 2 pattern of static classes over hex
+    values. `src/lib/format.ts` added for the short "Jan 15" date, formatted in UTC so
+    server and client agree.
+  - The React Compiler lint rule `react-hooks/static-components` rejects
+    `const Icon = getTypeIcon(...)` in a component body, so the lookup moved into a
+    `TypeIcon` component that builds the icon with `createElement`.
+  - Pinned items also appear in Recent; "recent" is the 10 newest by `updatedAt`
+    regardless of pin state, which is what the spec asks for.
+  - `npm run build` and `npm run lint` pass; verified at 1440px and 390px with no console
+    errors and no horizontal overflow.
+  - Known gaps: `/collections`, `/collections/[id]` and `/items/[type]` still don't
+    exist, so the collection cards and "View all" 404; no item drawer yet.
