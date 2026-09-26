@@ -2,8 +2,9 @@
 
 <!-- Feature name and short description -->
 
-**Dashboard Items** — replace the mock pinned and recent items in the dashboard main area
-with real data from Neon via Prisma. Spec: @context/features/dashboard-items-spec.md.
+**Stats & Sidebar** — read the dashboard stats and the sidebar's item types and
+collections from Neon via Prisma instead of `src/lib/mock-data.ts`.
+Spec: @context/features/stats-sidebar-spec.md.
 
 ## Status
 
@@ -15,19 +16,19 @@ Completed
 
 <!-- Goals and Requirements -->
 
-- Create `src/lib/db/items.ts` with the data fetching functions
-- Fetch pinned and recent items directly in the dashboard server component
-- Item card icon and border derived from the item's type
-- Keep everything the card shows today (type icon, title, pin/star, description, tags, date)
-- Hide the Pinned section entirely when there are no pinned items
-- Update the stats display so item counts come from the database
-- Look unchanged from the current mock-data version
+- Stats cards show database counts, keeping the current design/layout
+- Sidebar lists the system item types with their icons, linking to `/items/[typename]`
+- "View all collections" link under the sidebar collections list, going to `/collections`
+- Favorite collections keep the star; recent collections show a colored circle for the
+  most-used item type in that collection
+- Database functions live in `src/lib/db/items.ts` (using `src/lib/db/collections.ts`
+  as reference)
 
 ## Notes
 
 <!-- Any extra notes -->
 
-- Reference: @context/screenshots/dashboard-ui-main.png — layout and design already exist.
+- Reference: @src/lib/db/collections.ts
 
 ## History
 
@@ -199,3 +200,25 @@ Completed
     narrow width, no console errors and no horizontal overflow.
   - Known gaps: no tags are seeded, so no tag badges show yet; the sidebar still reads
     `mock-data.ts`; items don't open in a drawer yet.
+- 2026-09-26 — Stats & sidebar spec documented here and marked In Progress.
+- 2026-09-26 — **Stats & Sidebar** — Completed.
+  Spec: @context/features/stats-sidebar-spec.md. Built on branch `feature/stats-sidebar`.
+  - Stats cards already read from the database (done in Dashboard Items); layout unchanged.
+  - `getSidebarItemTypes` added to `src/lib/db/items.ts`: the system types with the
+    user's item count for each (filtered `_count`), in seed order. `SidebarItemType`
+    lives in `src/types/items.ts`.
+  - `getSidebarCollections` added to `src/lib/db/collections.ts`: every favorite plus the
+    5 most recently updated non-favorites, each with item count and most-used type
+    (same `rankTypes` ranking as the cards, falling back to `defaultTypeId`).
+  - `Sidebar` is now an async server component that fetches both and passes them to the
+    client `SidebarTypes` and `SidebarCollections` as props.
+  - Type names are shown as the capitalized plural slug ("Snippets"), linking to
+    `/items/[slug]`.
+  - Favorites keep the folder icon and star; recent collections show a colored circle
+    for their most-used type (`getTypeDotClass`, a new `bg-type-*` class map in
+    `item-types.ts`). A "View all collections" link sits under the list, going to
+    `/collections`.
+  - `npm run build`, `npm run lint` and `tsc` pass; verified in the browser at 1440px —
+    type counts (4 / 3 / 5 / 0 / 0 / 0 / 6) sum to the 18 seeded items, no console errors.
+  - Known gaps: `SidebarUser` still reads the mock user until auth exists;
+    `/collections` and `/items/[type]` routes still 404.

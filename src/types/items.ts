@@ -17,3 +17,8 @@ export interface ItemStats {
   total: number;
   favorites: number;
 }
+
+/** System item type with the user's item count, as listed in the sidebar. */
+export interface SidebarItemType extends CollectionItemType {
+  itemCount: number;
+}

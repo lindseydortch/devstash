@@ -25,3 +25,18 @@ export interface CollectionStats {
   total: number;
   favorites: number;
 }
+
+/** Collection as listed in the sidebar. */
+export interface SidebarCollection {
+  id: string;
+  name: string;
+  isFavorite: boolean;
+  itemCount: number;
+  /** Type the collection holds most, falling back to its default type */
+  accentType: CollectionItemType | null;
+}
+
+export interface SidebarCollections {
+  favorites: SidebarCollection[];
+  recent: SidebarCollection[];
+}

@@ -15,6 +15,11 @@ import {
   SidebarRail,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
+import { getSidebarCollections } from "@/lib/db/collections";
+import { getSidebarItemTypes } from "@/lib/db/items";
+import { getCurrentUserId } from "@/lib/db/users";
+
+const EMPTY_COLLECTIONS = { favorites: [], recent: [] };
 
 /**
  * Left sidebar for the authenticated app shell.
@@ -22,7 +27,12 @@ import {
  * Collapses to icons on desktop and becomes a drawer on mobile; both are driven
  * by the SidebarProvider in the (app) layout.
  */
-export function Sidebar() {
+export async function Sidebar() {
+  const userId = await getCurrentUserId();
+  const [itemTypes, collections] = userId
+    ? await Promise.all([getSidebarItemTypes(userId), getSidebarCollections(userId)])
+    : [[], EMPTY_COLLECTIONS];
+
   return (
     <SidebarRoot collapsible="icon">
       <SidebarHeader>
@@ -41,9 +51,12 @@ export function Sidebar() {
       </SidebarHeader>
 
       <SidebarContent>
-        <SidebarTypes />
+        <SidebarTypes itemTypes={itemTypes} />
         <SidebarSeparator />
-        <SidebarCollections />
+        <SidebarCollections
+          favorites={collections.favorites}
+          recent={collections.recent}
+        />
       </SidebarContent>
 
       <SidebarFooter>
