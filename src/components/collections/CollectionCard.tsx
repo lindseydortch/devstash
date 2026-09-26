@@ -9,22 +9,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  getTypeBorderClass,
-  getTypeById,
-  getTypeSurfaceClass,
-} from "@/lib/item-types";
-import type { Collection } from "@/lib/mock-data";
+import { getTypeBorderClass, getTypeSurfaceClass } from "@/lib/item-types";
 import { cn } from "@/lib/utils";
+import type { DashboardCollection } from "@/types/collections";
 
 /**
  * Collection card for the dashboard grid.
  *
- * The accent border and card wash come from the collection's default type —
- * the type it holds most — and the footer lists the types inside it.
+ * The accent border and card wash come from the type the collection holds
+ * most, and the footer lists every type inside it. An empty collection with no
+ * default type gets the neutral border.
  */
-export function CollectionCard({ collection }: { collection: Collection }) {
-  const defaultType = getTypeById(collection.defaultTypeId);
+export function CollectionCard({ collection }: { collection: DashboardCollection }) {
+  const accentSlug = collection.accentType?.slug ?? "";
 
   return (
     <Link
@@ -34,8 +31,8 @@ export function CollectionCard({ collection }: { collection: Collection }) {
       <Card
         className={cn(
           "h-full border-l-4 transition-colors hover:ring-foreground/25",
-          getTypeBorderClass(defaultType.slug),
-          getTypeSurfaceClass(defaultType.slug),
+          getTypeBorderClass(accentSlug),
+          getTypeSurfaceClass(accentSlug),
         )}
       >
         <CardHeader>
@@ -45,21 +42,21 @@ export function CollectionCard({ collection }: { collection: Collection }) {
               <Star className="size-3.5 shrink-0 fill-yellow-400 text-yellow-400" />
             ) : null}
           </CardTitle>
-          <CardDescription>{collection.itemCount} items</CardDescription>
+          <CardDescription>
+            {collection.itemCount} {collection.itemCount === 1 ? "item" : "items"}
+          </CardDescription>
         </CardHeader>
 
         <CardContent className="flex flex-col gap-4">
-          <p className="text-muted-foreground line-clamp-2 text-sm">
-            {collection.description}
-          </p>
+          {collection.description ? (
+            <p className="text-muted-foreground line-clamp-2 text-sm">
+              {collection.description}
+            </p>
+          ) : null}
 
           <div className="flex items-center gap-2.5">
-            {collection.itemTypeIds.map((typeId) => (
-              <TypeIcon
-                key={typeId}
-                type={getTypeById(typeId)}
-                className="size-4"
-              />
+            {collection.itemTypes.map((type) => (
+              <TypeIcon key={type.id} type={type} className="size-4" />
             ))}
           </div>
         </CardContent>

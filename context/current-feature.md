@@ -139,3 +139,28 @@ Completed
   - Seeded the Neon dev branch twice; `scripts/test-db.ts` reports 1 user, 7 types,
     5 collections, 18 items. `npm run build` and `npm run lint` pass.
   - Known gaps: no tags seeded; the app still reads from `src/lib/mock-data.ts`.
+- 2026-09-26 — Dashboard collections spec documented here and marked In Progress.
+- 2026-09-26 — **Dashboard Collections** — Completed.
+  Spec: @context/features/dashboard-collections-spec.md. Built on branch
+  `feature/dashboard-collections`.
+  - `src/lib/db/collections.ts` added: `getRecentCollections` (6 most recently updated,
+    with item count and the types inside each) and `getCollectionStats` (total and
+    favorite counts).
+  - `src/lib/db/users.ts` added: `getCurrentUserId` looks up the seeded demo user
+    (`demo@devstash.io`) until sign-in exists, wrapped in `React.cache`. If the demo user
+    is missing, the dashboard shows no collections and zeroed stats.
+  - Types for the card data live in `src/types/collections.ts`.
+  - The dashboard page is now `async` and fetches collections and stats directly with
+    Prisma.
+  - `CollectionCard` takes its border and wash from the collection's most-used type
+    (ties broken alphabetically), falling back to its `defaultTypeId`, then a neutral
+    border. Footer icons list every type, most-used first.
+  - Database type names are singular (`snippet`), so the slug for the existing color and
+    icon class maps is the name plus "s".
+  - `StatsCards` reads Collections and Favorite Collections from the database; Items and
+    Favorite Items stay on mock data. `TypeIcon`'s prop narrowed to `name`, `slug` and
+    `icon` so it takes both mock and database types.
+  - `npm run build` and `npm run lint` pass; verified at 1440px and phone width with no
+    console errors and no horizontal overflow. DevOps shows green (links, 2 of 4).
+  - Known gaps: item stat cards (10 mock) don't match the 18 seeded items; Pinned,
+    Recent and the sidebar still read `mock-data.ts`; `/collections` routes still 404.

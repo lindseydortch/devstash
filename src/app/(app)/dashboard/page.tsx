@@ -5,7 +5,9 @@ import Link from "next/link";
 import { CollectionCard } from "@/components/collections/CollectionCard";
 import { StatsCards } from "@/components/dashboard/StatsCards";
 import { ItemCard } from "@/components/items/ItemCard";
-import { collections, items } from "@/lib/mock-data";
+import { getCollectionStats, getRecentCollections } from "@/lib/db/collections";
+import { getCurrentUserId } from "@/lib/db/users";
+import { items } from "@/lib/mock-data";
 
 export const metadata: Metadata = {
   title: "Dashboard | DevStash",
@@ -16,10 +18,14 @@ const MAX_COLLECTIONS = 6;
 /** Recent items shown under the pinned ones. */
 const MAX_RECENT_ITEMS = 10;
 
-export default function DashboardPage() {
-  // Mock collections have no timestamps, so "recent" is the source order —
-  // same fallback the sidebar uses.
-  const recentCollections = collections.slice(0, MAX_COLLECTIONS);
+export default async function DashboardPage() {
+  const userId = await getCurrentUserId();
+  const [recentCollections, collectionStats] = userId
+    ? await Promise.all([
+        getRecentCollections(userId, MAX_COLLECTIONS),
+        getCollectionStats(userId),
+      ])
+    : [[], { total: 0, favorites: 0 }];
   const pinnedItems = items.filter((item) => item.isPinned);
   const recentItems = [...items]
     .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
@@ -32,7 +38,7 @@ export default function DashboardPage() {
         <p className="text-muted-foreground mt-1">Your developer knowledge hub</p>
       </div>
 
-      <StatsCards />
+      <StatsCards collectionStats={collectionStats} />
 
       <section>
         <div className="mb-4 flex items-center justify-between gap-4">
