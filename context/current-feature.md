@@ -119,3 +119,23 @@ Completed
     `.env.example` documents `DATABASE_URL` and `DIRECT_URL`.
   - Known gaps: the migration hasn't been applied to the Neon production branch (needs
     `prisma migrate deploy`); the app still reads from `src/lib/mock-data.ts`.
+- 2026-09-26 — Seed sample data spec documented here and marked In Progress.
+- 2026-09-26 — **Seed Sample Data** — Completed.
+  Spec: @context/features/seed-spec.md. Built on branch `feature/seed-data`.
+  - `bcryptjs` added; `prisma/seed.ts` rewritten to seed the 7 system types, a demo user
+    (`demo@devstash.io` / `12345678`, hashed with 12 rounds, `isPro: false`, email
+    verified) and 5 collections with 18 items.
+  - Collections: React Patterns (3 TS snippets), AI Workflows (3 prompts), DevOps
+    (1 snippet, 1 command, 2 links), Terminal Commands (4 commands), Design Resources
+    (4 links). Links use real URLs; each item is joined to its collection through
+    `ItemCollection`.
+  - Snippets, prompts and commands are `TEXT`; links are `URL`. Each collection gets a
+    `defaultTypeId` so its card is colored.
+  - A few items are pinned or favorited, and React Patterns and AI Workflows are favorite
+    collections, so the dashboard's pinned and favorite sections have data (the spec
+    doesn't specify these).
+  - Re-runnable: system types upserted by name, demo user upserted by email, and the
+    demo user's items and collections deleted and recreated on each run.
+  - Seeded the Neon dev branch twice; `scripts/test-db.ts` reports 1 user, 7 types,
+    5 collections, 18 items. `npm run build` and `npm run lint` pass.
+  - Known gaps: no tags seeded; the app still reads from `src/lib/mock-data.ts`.
