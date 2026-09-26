@@ -48,7 +48,7 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-/* Item type colors. Mirrors the hex values on the item types in mock-data.ts,
+/* Item type colors. Mirrors the hex values on the system types in prisma/seed.ts,
    so type accents can use static utilities (text-type-snippet, border-type-link). */
 @theme {
   --color-type-snippet: #3b82f6;

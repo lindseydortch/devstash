@@ -16,8 +16,10 @@ read the following to get the full context of the project:
 - **Build**: `npm run build` 
 - **Production server**: `npm run start` 
 - **Lint**: `npm run lint`
-
-- 
+- **Generate Prisma client**: `npm run db:generate`
+- **Create/apply migration**: `npm run db:migrate -- --name <name>`
+- **Seed database**: `npm run db:seed`
+- **Prisma Studio**: `npm run db:studio`
 
 <!-- BEGIN:nextjs-agent-rules -->
 
