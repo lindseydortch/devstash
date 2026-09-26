@@ -81,6 +81,13 @@ const TYPE_DOT_CLASSES: Record<string, string> = {
   links: "bg-type-link",
 };
 
+/** Type slugs only available on the Pro plan. */
+const PRO_TYPE_SLUGS = new Set(["files", "images"]);
+
+export function isProType(slug: string): boolean {
+  return PRO_TYPE_SLUGS.has(slug);
+}
+
 export function getTypeIcon(icon: string): LucideIcon {
   return TYPE_ICONS[icon] ?? File;
 }
