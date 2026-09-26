@@ -1,9 +1,9 @@
 import { Boxes, FolderHeart, FolderOpen, Star, type LucideIcon } from "lucide-react";
 
 import { Card, CardContent } from "@/components/ui/card";
-import { items } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 import type { CollectionStats } from "@/types/collections";
+import type { ItemStats } from "@/types/items";
 
 interface Stat {
   label: string;
@@ -13,15 +13,17 @@ interface Stat {
   iconClassName: string;
 }
 
-/**
- * Totals across the stash. Collection counts come from the database; item
- * counts still come from the mock array until items move over.
- */
-export function StatsCards({ collectionStats }: { collectionStats: CollectionStats }) {
+interface StatsCardsProps {
+  itemStats: ItemStats;
+  collectionStats: CollectionStats;
+}
+
+/** Totals across the stash. */
+export function StatsCards({ itemStats, collectionStats }: StatsCardsProps) {
   const stats: Stat[] = [
     {
       label: "Items",
-      value: items.length,
+      value: itemStats.total,
       icon: Boxes,
       iconClassName: "text-type-snippet",
     },
@@ -33,7 +35,7 @@ export function StatsCards({ collectionStats }: { collectionStats: CollectionSta
     },
     {
       label: "Favorite Items",
-      value: items.filter((item) => item.isFavorite).length,
+      value: itemStats.favorites,
       icon: Star,
       iconClassName: "text-type-note",
     },

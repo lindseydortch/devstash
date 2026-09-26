@@ -1,8 +1,8 @@
 import { createElement } from "react";
 
 import { getTypeIcon, getTypeTextClass } from "@/lib/item-types";
-import type { ItemType } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
+import type { CollectionItemType } from "@/types/collections";
 
 /**
  * Lucide icon for an item type, tinted with that type's color.
@@ -15,7 +15,7 @@ export function TypeIcon({
   type,
   className,
 }: {
-  type: Pick<ItemType, "name" | "slug" | "icon">;
+  type: Pick<CollectionItemType, "name" | "slug" | "icon">;
   className?: string;
 }) {
   return createElement(getTypeIcon(type.icon), {
