@@ -2,9 +2,9 @@
 
 <!-- Feature name and short description -->
 
-**Stats & Sidebar** — read the dashboard stats and the sidebar's item types and
-collections from Neon via Prisma instead of `src/lib/mock-data.ts`.
-Spec: @context/features/stats-sidebar-spec.md.
+**Add Pro Badge to Sidebar** — mark the Pro-only item types (Files and Images) in the
+sidebar with a PRO badge.
+Spec: @context/features/add-pro-badge-sidebar.md.
 
 ## Status
 
@@ -16,19 +16,18 @@ Completed
 
 <!-- Goals and Requirements -->
 
-- Stats cards show database counts, keeping the current design/layout
-- Sidebar lists the system item types with their icons, linking to `/items/[typename]`
-- "View all collections" link under the sidebar collections list, going to `/collections`
-- Favorite collections keep the star; recent collections show a colored circle for the
-  most-used item type in that collection
-- Database functions live in `src/lib/db/items.ts` (using `src/lib/db/collections.ts`
-  as reference)
+- Files and Images in the sidebar types list show a PRO badge
+- Badge uses the shadcn/ui `badge` component (already installed)
+- Badge is clean and subtle
+- Badge text is all uppercase: `PRO`
 
 ## Notes
 
 <!-- Any extra notes -->
 
-- Reference: @src/lib/db/collections.ts
+- Files and Images are the Pro-only system types per the project overview's
+  monetization table.
+- Sidebar types render in `SidebarTypes` (`src/components/layout/`).
 
 ## History
 
@@ -222,3 +221,18 @@ Completed
     type counts (4 / 3 / 5 / 0 / 0 / 0 / 6) sum to the 18 seeded items, no console errors.
   - Known gaps: `SidebarUser` still reads the mock user until auth exists;
     `/collections` and `/items/[type]` routes still 404.
+- 2026-09-26 — Add Pro badge to sidebar spec documented here and marked In Progress.
+- 2026-09-26 — **Add Pro Badge to Sidebar** — Completed.
+  Spec: @context/features/add-pro-badge-sidebar.md. Built on branch
+  `feature/add-pro-badge-sidebar`.
+  - `isProType(slug)` added to `src/lib/item-types.ts`, backed by a `PRO_TYPE_SLUGS` set
+    (`files`, `images`), next to the other slug-keyed lookups.
+  - `SidebarTypes` renders a shadcn `Badge` reading `PRO` after the label for Pro types:
+    `outline` variant, `h-4`, `text-[10px]`, `tracking-wider`, muted text.
+  - The badge sits inside the link rather than beside `SidebarMenuBadge`, which is
+    absolutely positioned on the right and would overlap it. In icon-collapsed mode the
+    button's `overflow-hidden` clips it.
+  - The badge is display only — it doesn't gate access (all features stay unlocked during
+    development).
+  - `npm run build`, `npm run lint` and `tsc` pass; verified in the browser at 1440px,
+    expanded and collapsed, no console errors.

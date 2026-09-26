@@ -4,6 +4,7 @@ import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { Badge } from "@/components/ui/badge";
 import {
   Collapsible,
   CollapsibleContent,
@@ -18,7 +19,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { getTypeIcon, getTypeTextClass } from "@/lib/item-types";
+import { getTypeIcon, getTypeTextClass, isProType } from "@/lib/item-types";
 import type { SidebarItemType } from "@/types/items";
 
 /** Item types in the sidebar, each linking to /items/[slug]. */
@@ -53,6 +54,14 @@ export function SidebarTypes({ itemTypes }: { itemTypes: SidebarItemType[] }) {
                       <Link href={href}>
                         <Icon className={getTypeTextClass(type.slug)} />
                         <span>{label}</span>
+                        {isProType(type.slug) && (
+                          <Badge
+                            variant="outline"
+                            className="h-4 px-1.5 text-[10px] font-semibold tracking-wider text-muted-foreground"
+                          >
+                            PRO
+                          </Badge>
+                        )}
                       </Link>
                     </SidebarMenuButton>
                     <SidebarMenuBadge>{type.itemCount}</SidebarMenuBadge>
