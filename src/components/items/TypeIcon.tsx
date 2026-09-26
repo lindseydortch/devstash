@@ -15,7 +15,7 @@ export function TypeIcon({
   type,
   className,
 }: {
-  type: ItemType;
+  type: Pick<ItemType, "name" | "slug" | "icon">;
   className?: string;
 }) {
   return createElement(getTypeIcon(type.icon), {
