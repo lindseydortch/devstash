@@ -70,6 +70,17 @@ const TYPE_ACCENT_CLASSES: Record<string, string> = {
   links: "bg-type-link/10",
 };
 
+/** Solid dot marking a collection's most-used type in the sidebar. */
+const TYPE_DOT_CLASSES: Record<string, string> = {
+  snippets: "bg-type-snippet",
+  prompts: "bg-type-prompt",
+  commands: "bg-type-command",
+  notes: "bg-type-note",
+  files: "bg-type-file",
+  images: "bg-type-image",
+  links: "bg-type-link",
+};
+
 export function getTypeIcon(icon: string): LucideIcon {
   return TYPE_ICONS[icon] ?? File;
 }
@@ -88,4 +99,8 @@ export function getTypeSurfaceClass(slug: string): string {
 
 export function getTypeAccentClass(slug: string): string {
   return TYPE_ACCENT_CLASSES[slug] ?? "bg-muted";
+}
+
+export function getTypeDotClass(slug: string): string {
+  return TYPE_DOT_CLASSES[slug] ?? "bg-muted-foreground";
 }

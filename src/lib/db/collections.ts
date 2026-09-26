@@ -3,6 +3,8 @@ import type {
   CollectionItemType,
   CollectionStats,
   DashboardCollection,
+  SidebarCollection,
+  SidebarCollections,
 } from "@/types/collections";
 
 export const TYPE_SELECT = { id: true, name: true, icon: true } as const;
@@ -69,4 +71,59 @@ export async function getCollectionStats(userId: string): Promise<CollectionStat
   ]);
 
   return { total, favorites };
+}
+
+const SIDEBAR_COLLECTION_SELECT = {
+  id: true,
+  name: true,
+  isFavorite: true,
+  defaultType: { select: TYPE_SELECT },
+  items: { select: { item: { select: { itemType: { select: TYPE_SELECT } } } } },
+} as const;
+
+type SidebarCollectionRecord = {
+  id: string;
+  name: string;
+  isFavorite: boolean;
+  defaultType: TypeRecord | null;
+  items: { item: { itemType: TypeRecord } }[];
+};
+
+function toSidebarCollection({
+  defaultType,
+  items,
+  ...collection
+}: SidebarCollectionRecord): SidebarCollection {
+  const [topType] = rankTypes(items.map(({ item }) => item.itemType));
+
+  return {
+    ...collection,
+    itemCount: items.length,
+    accentType: topType ?? (defaultType ? toCollectionItemType(defaultType) : null),
+  };
+}
+
+/** Every favorite collection, plus the most recently updated of the rest. */
+export async function getSidebarCollections(
+  userId: string,
+  recentLimit = 5,
+): Promise<SidebarCollections> {
+  const [favorites, recent] = await Promise.all([
+    prisma.collection.findMany({
+      where: { userId, isFavorite: true },
+      orderBy: { updatedAt: "desc" },
+      select: SIDEBAR_COLLECTION_SELECT,
+    }),
+    prisma.collection.findMany({
+      where: { userId, isFavorite: false },
+      orderBy: { updatedAt: "desc" },
+      take: recentLimit,
+      select: SIDEBAR_COLLECTION_SELECT,
+    }),
+  ]);
+
+  return {
+    favorites: favorites.map(toSidebarCollection),
+    recent: recent.map(toSidebarCollection),
+  };
 }

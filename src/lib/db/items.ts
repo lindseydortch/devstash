@@ -1,7 +1,7 @@
 import type { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db";
 import { TYPE_SELECT, toCollectionItemType } from "@/lib/db/collections";
-import type { DashboardItem, ItemStats } from "@/types/items";
+import type { DashboardItem, ItemStats, SidebarItemType } from "@/types/items";
 
 const ITEM_SELECT = {
   id: true,
@@ -13,6 +13,9 @@ const ITEM_SELECT = {
   itemType: { select: TYPE_SELECT },
   tags: { select: { name: true }, orderBy: { name: "asc" } },
 } satisfies Prisma.ItemSelect;
+
+/** Sidebar order for the system types, matching the seed. */
+const SYSTEM_TYPE_ORDER = ["snippet", "prompt", "command", "note", "file", "image", "link"];
 
 type ItemRecord = Prisma.ItemGetPayload<{ select: typeof ITEM_SELECT }>;
 
@@ -56,4 +59,24 @@ export async function getItemStats(userId: string): Promise<ItemStats> {
   ]);
 
   return { total, favorites };
+}
+
+/** System item types with how many items the user has of each, in sidebar order. */
+export async function getSidebarItemTypes(userId: string): Promise<SidebarItemType[]> {
+  const types = await prisma.itemType.findMany({
+    where: { isSystem: true },
+    select: { ...TYPE_SELECT, _count: { select: { items: { where: { userId } } } } },
+  });
+
+  const rank = (name: string) => {
+    const index = SYSTEM_TYPE_ORDER.indexOf(name);
+    return index === -1 ? SYSTEM_TYPE_ORDER.length : index;
+  };
+
+  return types
+    .sort((a, b) => rank(a.name) - rank(b.name) || a.name.localeCompare(b.name))
+    .map(({ _count, ...type }) => ({
+      ...toCollectionItemType(type),
+      itemCount: _count.items,
+    }));
 }

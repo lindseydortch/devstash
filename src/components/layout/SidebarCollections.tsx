@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, Folder, Star } from "lucide-react";
+import { ChevronDown, Folder, LayoutGrid, Star } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -18,23 +18,40 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { collections, type Collection } from "@/lib/mock-data";
+import { getTypeDotClass } from "@/lib/item-types";
+import { cn } from "@/lib/utils";
+import type { SidebarCollection } from "@/types/collections";
 
-/** How many recent collections to list under the favorites. */
-const MAX_RECENT = 5;
+/** Circle tinted by the type a collection holds most. */
+function TypeDot({ collection }: { collection: SidebarCollection }) {
+  return (
+    <span className="flex size-4 shrink-0 items-center justify-center">
+      <span
+        className={cn(
+          "size-2.5 rounded-full",
+          getTypeDotClass(collection.accentType?.slug ?? ""),
+        )}
+      />
+    </span>
+  );
+}
 
 function CollectionMenuItem({
   collection,
   isActive,
 }: {
-  collection: Collection;
+  collection: SidebarCollection;
   isActive: boolean;
 }) {
   return (
     <SidebarMenuItem>
       <SidebarMenuButton asChild isActive={isActive} tooltip={collection.name}>
         <Link href={`/collections/${collection.id}`}>
-          <Folder className="text-muted-foreground" />
+          {collection.isFavorite ? (
+            <Folder className="text-muted-foreground" />
+          ) : (
+            <TypeDot collection={collection} />
+          )}
           <span>{collection.name}</span>
           {collection.isFavorite ? (
             <Star className="ml-auto size-3.5 fill-yellow-400 text-yellow-400" />
@@ -48,19 +65,16 @@ function CollectionMenuItem({
   );
 }
 
-/**
- * Collections in the sidebar: favorites first, then the most recent ones.
- *
- * Mock collections have no timestamps yet, so "recent" is the source order.
- */
-export function SidebarCollections() {
-  const pathname = usePathname();
-  const favorites = collections.filter((collection) => collection.isFavorite);
-  const recent = collections
-    .filter((collection) => !collection.isFavorite)
-    .slice(0, MAX_RECENT);
+interface SidebarCollectionsProps {
+  favorites: SidebarCollection[];
+  recent: SidebarCollection[];
+}
 
-  const isActive = (collection: Collection) =>
+/** Collections in the sidebar: favorites first, then the most recent ones. */
+export function SidebarCollections({ favorites, recent }: SidebarCollectionsProps) {
+  const pathname = usePathname();
+
+  const isActive = (collection: SidebarCollection) =>
     pathname === `/collections/${collection.id}`;
 
   return (
@@ -107,6 +121,24 @@ export function SidebarCollections() {
               </SidebarMenu>
             </SidebarGroupContent>
           ) : null}
+
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={pathname === "/collections"}
+                  tooltip="View all collections"
+                  className="text-muted-foreground"
+                >
+                  <Link href="/collections">
+                    <LayoutGrid />
+                    <span>View all collections</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
         </CollapsibleContent>
       </SidebarGroup>
     </Collapsible>
