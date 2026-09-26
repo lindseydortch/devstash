@@ -15,13 +15,14 @@ async function main() {
   const [{ now }] = await prisma.$queryRaw<{ now: Date }[]>`SELECT NOW() AS now`;
   console.log(`✔ Connected to database (server time: ${now.toISOString()})`);
 
-  const counts = {
-    users: await prisma.user.count(),
-    itemTypes: await prisma.itemType.count(),
-    items: await prisma.item.count(),
-    collections: await prisma.collection.count(),
-    tags: await prisma.tag.count(),
-  };
+  const [users, itemTypes, items, collections, tags] = await Promise.all([
+    prisma.user.count(),
+    prisma.itemType.count(),
+    prisma.item.count(),
+    prisma.collection.count(),
+    prisma.tag.count(),
+  ]);
+  const counts = { users, itemTypes, items, collections, tags };
   console.log("✔ Table row counts:");
   console.table(counts);
 

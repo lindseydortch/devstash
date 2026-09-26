@@ -2,32 +2,19 @@
 
 <!-- Feature name and short description -->
 
-**Add Pro Badge to Sidebar** — mark the Pro-only item types (Files and Images) in the
-sidebar with a PRO badge.
-Spec: @context/features/add-pro-badge-sidebar.md.
-
 ## Status
 
 <!-- Not started | In Progress | Completed -->
 
-Completed
+Not started
 
 ## Goals
 
 <!-- Goals and Requirements -->
 
-- Files and Images in the sidebar types list show a PRO badge
-- Badge uses the shadcn/ui `badge` component (already installed)
-- Badge is clean and subtle
-- Badge text is all uppercase: `PRO`
-
 ## Notes
 
 <!-- Any extra notes -->
-
-- Files and Images are the Pro-only system types per the project overview's
-  monetization table.
-- Sidebar types render in `SidebarTypes` (`src/components/layout/`).
 
 ## History
 
@@ -236,3 +223,11 @@ Completed
     development).
   - `npm run build`, `npm run lint` and `tsc` pass; verified in the browser at 1440px,
     expanded and collapsed, no console errors.
+- 2026-09-26 — Code scan quick wins documented here and marked In Progress.
+- 2026-09-26 — **Code Scan Quick Wins** — Completed. Built on branch
+  `fix/code-scan-quick-wins`.
+  - `scripts/test-db.ts` runs its five table counts in one `Promise.all` instead of
+    sequential awaits; output unchanged (1 user, 7 types, 18 items, 5 collections,
+    0 tags).
+  - The scan found no N+1 queries, so none were fixed. Auth stays out of scope.
+  - `npm run build` and `npm run lint` pass.
