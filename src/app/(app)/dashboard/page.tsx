@@ -6,8 +6,8 @@ import { CollectionCard } from "@/components/collections/CollectionCard";
 import { StatsCards } from "@/components/dashboard/StatsCards";
 import { ItemCard } from "@/components/items/ItemCard";
 import { getCollectionStats, getRecentCollections } from "@/lib/db/collections";
+import { getItemStats, getPinnedItems, getRecentItems } from "@/lib/db/items";
 import { getCurrentUserId } from "@/lib/db/users";
-import { items } from "@/lib/mock-data";
 
 export const metadata: Metadata = {
   title: "Dashboard | DevStash",
@@ -17,19 +17,19 @@ export const metadata: Metadata = {
 const MAX_COLLECTIONS = 6;
 /** Recent items shown under the pinned ones. */
 const MAX_RECENT_ITEMS = 10;
+const EMPTY_STATS = { total: 0, favorites: 0 };
 
 export default async function DashboardPage() {
   const userId = await getCurrentUserId();
-  const [recentCollections, collectionStats] = userId
+  const [recentCollections, collectionStats, pinnedItems, recentItems, itemStats] = userId
     ? await Promise.all([
         getRecentCollections(userId, MAX_COLLECTIONS),
         getCollectionStats(userId),
+        getPinnedItems(userId),
+        getRecentItems(userId, MAX_RECENT_ITEMS),
+        getItemStats(userId),
       ])
-    : [[], { total: 0, favorites: 0 }];
-  const pinnedItems = items.filter((item) => item.isPinned);
-  const recentItems = [...items]
-    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
-    .slice(0, MAX_RECENT_ITEMS);
+    : [[], EMPTY_STATS, [], [], EMPTY_STATS];
 
   return (
     <div className="space-y-10">
@@ -38,7 +38,7 @@ export default async function DashboardPage() {
         <p className="text-muted-foreground mt-1">Your developer knowledge hub</p>
       </div>
 
-      <StatsCards collectionStats={collectionStats} />
+      <StatsCards itemStats={itemStats} collectionStats={collectionStats} />
 
       <section>
         <div className="mb-4 flex items-center justify-between gap-4">

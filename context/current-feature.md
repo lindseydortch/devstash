@@ -2,6 +2,9 @@
 
 <!-- Feature name and short description -->
 
+**Dashboard Items** — replace the mock pinned and recent items in the dashboard main area
+with real data from Neon via Prisma. Spec: @context/features/dashboard-items-spec.md.
+
 ## Status
 
 <!-- Not started | In Progress | Completed -->
@@ -12,9 +15,19 @@ Completed
 
 <!-- Goals and Requirements -->
 
+- Create `src/lib/db/items.ts` with the data fetching functions
+- Fetch pinned and recent items directly in the dashboard server component
+- Item card icon and border derived from the item's type
+- Keep everything the card shows today (type icon, title, pin/star, description, tags, date)
+- Hide the Pinned section entirely when there are no pinned items
+- Update the stats display so item counts come from the database
+- Look unchanged from the current mock-data version
+
 ## Notes
 
 <!-- Any extra notes -->
+
+- Reference: @context/screenshots/dashboard-ui-main.png — layout and design already exist.
 
 ## History
 
@@ -164,3 +177,25 @@ Completed
     console errors and no horizontal overflow. DevOps shows green (links, 2 of 4).
   - Known gaps: item stat cards (10 mock) don't match the 18 seeded items; Pinned,
     Recent and the sidebar still read `mock-data.ts`; `/collections` routes still 404.
+- 2026-09-26 — Dashboard items spec documented here and marked In Progress.
+- 2026-09-26 — **Dashboard Items** — Completed.
+  Spec: @context/features/dashboard-items-spec.md. Built on branch
+  `feature/dashboard-items`.
+  - `src/lib/db/items.ts` added: `getPinnedItems` (all pinned, newest first),
+    `getRecentItems` (10 most recently updated, pinned or not) and `getItemStats` (total
+    and favorite counts). Types live in `src/types/items.ts`.
+  - The dashboard fetches pinned items, recent items and item stats alongside the
+    collection queries in one `Promise.all`. The Pinned section only renders when there
+    are pinned items.
+  - `ItemCard` takes a `DashboardItem`; its icon, border and icon tile come from the
+    item's database type, reusing `toCollectionItemType` (now exported from
+    `collections.ts`) for the singular-name → plural-slug mapping. Tags render as badges
+    sorted by name; the description line is skipped when empty.
+  - `StatsCards` now reads every count from the database: 18 items, 5 collections,
+    3 favorite items, 2 favorite collections.
+  - `getTypeById` removed from `item-types.ts` (no longer used); `TypeIcon` types its prop
+    against `CollectionItemType` instead of the mock `ItemType`.
+  - `npm run build`, `npm run lint` and `tsc` pass; verified in the browser at 1440px and
+    narrow width, no console errors and no horizontal overflow.
+  - Known gaps: no tags are seeded, so no tag badges show yet; the sidebar still reads
+    `mock-data.ts`; items don't open in a drawer yet.

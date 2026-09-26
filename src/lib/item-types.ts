@@ -9,8 +9,6 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-import { itemTypes, type ItemType } from "@/lib/mock-data";
-
 /** Lucide icon name stored on an item type → the icon component. */
 const TYPE_ICONS: Record<string, LucideIcon> = {
   Code,
@@ -71,15 +69,6 @@ const TYPE_ACCENT_CLASSES: Record<string, string> = {
   images: "bg-type-image/10",
   links: "bg-type-link/10",
 };
-
-/**
- * Item type for an id stored on an item or collection.
- *
- * Falls back to the first type so a card with stale data still renders.
- */
-export function getTypeById(id: string): ItemType {
-  return itemTypes.find((type) => type.id === id) ?? itemTypes[0];
-}
 
 export function getTypeIcon(icon: string): LucideIcon {
   return TYPE_ICONS[icon] ?? File;

@@ -5,12 +5,12 @@ import type {
   DashboardCollection,
 } from "@/types/collections";
 
-const TYPE_SELECT = { id: true, name: true, icon: true } as const;
+export const TYPE_SELECT = { id: true, name: true, icon: true } as const;
 
 type TypeRecord = { id: string; name: string; icon: string };
 
 /** Database type names are singular ("snippet"); routes and colors use plurals. */
-function toCollectionItemType(type: TypeRecord): CollectionItemType {
+export function toCollectionItemType(type: TypeRecord): CollectionItemType {
   return { id: type.id, name: type.name, slug: `${type.name}s`, icon: type.icon };
 }
 

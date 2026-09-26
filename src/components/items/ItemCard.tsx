@@ -4,13 +4,9 @@ import { TypeIcon } from "@/components/items/TypeIcon";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatShortDate } from "@/lib/format";
-import {
-  getTypeAccentClass,
-  getTypeBorderClass,
-  getTypeById,
-} from "@/lib/item-types";
-import type { Item } from "@/lib/mock-data";
+import { getTypeAccentClass, getTypeBorderClass } from "@/lib/item-types";
 import { cn } from "@/lib/utils";
+import type { DashboardItem } from "@/types/items";
 
 /**
  * Item card for the pinned and recent lists.
@@ -18,8 +14,8 @@ import { cn } from "@/lib/utils";
  * Not a link yet — items are meant to open in a drawer, which is a later
  * feature, so the card stays display only for now.
  */
-export function ItemCard({ item }: { item: Item }) {
-  const type = getTypeById(item.typeId);
+export function ItemCard({ item }: { item: DashboardItem }) {
+  const { type } = item;
 
   return (
     <Card
@@ -55,9 +51,11 @@ export function ItemCard({ item }: { item: Item }) {
             </time>
           </div>
 
-          <p className="text-muted-foreground mt-1 line-clamp-2 text-sm">
-            {item.description}
-          </p>
+          {item.description ? (
+            <p className="text-muted-foreground mt-1 line-clamp-2 text-sm">
+              {item.description}
+            </p>
+          ) : null}
 
           {item.tags.length > 0 ? (
             <div className="mt-3 flex flex-wrap gap-1.5">
