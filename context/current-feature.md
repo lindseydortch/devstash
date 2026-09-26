@@ -95,3 +95,27 @@ Completed
     order, capped at 6 — the same fallback the phase 2 sidebar uses.
   - Known gaps: `/collections`, `/collections/[id]` and `/items/[type]` still don't
     exist, so the collection cards and "View all" 404; no item drawer yet.
+- 2026-09-25 — Database (Prisma + Neon) spec documented here and marked In Progress.
+- 2026-09-26 — **Prisma + Neon PostgreSQL Setup** — Completed.
+  Spec: @context/features/database-spec.md. Built on branch `feature/database-setup`.
+  - Prisma 7 installed with `@prisma/adapter-neon`; the `prisma-client` generator outputs
+    to `src/generated/prisma` (gitignored, regenerated on `postinstall`).
+  - `prisma.config.ts` loads env vars via `dotenv` and points the CLI at `DIRECT_URL`
+    (falling back to `DATABASE_URL`) since migrations need a non-pooled Neon connection.
+  - `prisma/schema.prisma` built from the project overview data model: User, Item,
+    ItemType, Collection, ItemCollection, Tag, plus the Auth.js models (Account, Session,
+    VerificationToken), with indexes and cascade deletes.
+  - Initial migration `20260925172454_init` created and applied to the Neon development
+    branch with `prisma migrate dev` — no `db push`. `prisma migrate status` reports the
+    schema up to date.
+  - `prisma/seed.ts` seeds the 7 system item types. Postgres treats `NULL` userIds as
+    distinct, so it upserts by name manually rather than relying on
+    `@@unique([name, userId])`.
+  - `src/lib/db.ts` exports a Prisma client singleton on the Neon adapter, reused across
+    hot reloads in development.
+  - `scripts/test-db.ts` added as a read-only smoke test (`npx tsx scripts/test-db.ts`):
+    checks the connection, table row counts and seeded system types — all 7 found.
+  - `db:generate`, `db:migrate`, `db:seed` and `db:studio` npm scripts added;
+    `.env.example` documents `DATABASE_URL` and `DIRECT_URL`.
+  - Known gaps: the migration hasn't been applied to the Neon production branch (needs
+    `prisma migrate deploy`); the app still reads from `src/lib/mock-data.ts`.
